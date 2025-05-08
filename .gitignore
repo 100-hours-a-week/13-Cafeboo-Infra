@@ -1,0 +1,15 @@
+# SSH keys
+*.pem
+*.key
+*.pub
+
+# terraform key file
+terraform-key.json
+
+# tfstate
+*.tfstate*
+*.tfvars
+.terraform/
+
+# macOS
+.DS_Store
