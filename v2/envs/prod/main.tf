@@ -34,3 +34,40 @@ module "vpc" {
   }
 }
 
+# nat
+module "nat_a" {
+  source            = "../../modules/nat"
+  name              = "nat-prod-a"
+  project           = var.project
+  region            = var.region
+  network_self_link = module.vpc.network_self_link
+  subnetworks = [
+    {
+      name                    = module.vpc.private_subnet_self_links["be-a"]
+      source_ip_ranges_to_nat = ["ALL_IP_RANGES"]
+    },
+    {
+      name                    = module.vpc.private_subnet_self_links["ai-a"]
+      source_ip_ranges_to_nat = ["ALL_IP_RANGES"]
+    }
+  ]
+}
+
+module "nat_b" {
+  source            = "../../modules/nat"
+  name              = "nat-prod-b"
+  project           = var.project
+  region            = var.region
+  network_self_link = module.vpc.network_self_link
+  subnetworks = [
+    {
+      name                    = module.vpc.private_subnet_self_links["be-b"]
+      source_ip_ranges_to_nat = ["ALL_IP_RANGES"]
+    },
+    {
+      name                    = module.vpc.private_subnet_self_links["ai-b"]
+      source_ip_ranges_to_nat = ["ALL_IP_RANGES"]
+    }
+  ]
+}
+
