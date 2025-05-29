@@ -71,3 +71,56 @@ module "nat_b" {
   ]
 }
 
+# Compute Instance
+
+## Back
+module "backend_a" {
+  source           = "../../modules/compute_instance"
+  name             = "backend-a"
+  project          = var.project
+  zone             = var.zone_A
+  machine_type     = "e2-small"
+  image            = var.image
+  subnet_self_link = module.vpc.private_subnet_self_links["be-a"]
+  startup_script   = file("${path.module}/scripts/back.sh")
+  tags             = ["backend"]
+}
+
+module "backend_b" {
+  source           = "../../modules/compute_instance"
+  name             = "backend-b"
+  project          = var.project
+  zone             = var.zone_B
+  machine_type     = "e2-small"
+  image            = var.image
+  subnet_self_link = module.vpc.private_subnet_self_links["be-b"]
+  startup_script   = file("${path.module}/scripts/back.sh")
+  tags             = ["backend"]
+}
+
+## AI
+
+module "ai_a" {
+  source           = "../../modules/compute_instance"
+  name             = "ai-a"
+  project          = var.project
+  zone             = var.zone_A
+  machine_type     = "e2-small"
+  image            = var.image
+  subnet_self_link = module.vpc.private_subnet_self_links["ai-a"]
+  startup_script   = file("${path.module}/scripts/ai.sh")
+  tags             = ["ai"]
+}
+
+module "ai_b" {
+  source           = "../../modules/compute_instance"
+  name             = "ai-b"
+  project          = var.project
+  zone             = var.zone_B
+  machine_type     = "e2-small"
+  image            = var.image
+  subnet_self_link = module.vpc.private_subnet_self_links["ai-b"]
+  startup_script   = file("${path.module}/scripts/ai.sh")
+  tags             = ["ai"]
+}
+

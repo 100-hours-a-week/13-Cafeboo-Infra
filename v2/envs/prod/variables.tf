@@ -21,3 +21,9 @@ variable "zone_B" {
   description = "GCP 존"
   default     = "asia-northeast3-b"
 }
+
+variable "image" {
+  type        = string
+  description = "공통적으로 사용할 기본 VM 이미지"
+  default     = "ubuntu-os-cloud/ubuntu-2204-lts"
+}
