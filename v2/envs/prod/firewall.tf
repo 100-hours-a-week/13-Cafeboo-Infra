@@ -1,0 +1,77 @@
+# SSH
+resource "google_compute_firewall" "allow_ssh" {
+  name    = "allow-ssh"
+  network = module.vpc.network_self_link
+  project = var.project
+
+  direction     = "INGRESS"
+  source_ranges = ["0.0.0.0/0"]
+  target_tags   = ["backend", "ai"]
+
+  allow {
+    protocol = "tcp"
+    ports    = ["22"]
+  }
+}
+
+# ICMP (ping 등)
+resource "google_compute_firewall" "allow_icmp" {
+  name    = "allow-icmp"
+  network = module.vpc.network_self_link
+  project = var.project
+
+  direction     = "INGRESS"
+  source_ranges = ["0.0.0.0/0"]
+  target_tags   = ["backend", "ai"]
+
+  allow {
+    protocol = "icmp"
+  }
+}
+
+# Internal 통신 허용 (10.20.0.0/16 안의 모든 인스턴스 간)
+resource "google_compute_firewall" "allow-internal" {
+  name    = "allow-internal"
+  network = module.vpc.network_self_link
+  project = var.project
+
+  direction     = "INGRESS"
+  source_ranges = ["10.20.0.0/16"]
+  target_tags   = ["backend", "ai"]
+
+  allow {
+    protocol = "all"
+  }
+}
+
+# Internal Load Balancer용 백엔드 → AI (http 포트)
+resource "google_compute_firewall" "allow-ilb-ai" {
+  name    = "allow-ilb-ai"
+  network = module.vpc.network_self_link
+  project = var.project
+
+  direction     = "INGRESS"
+  source_ranges = ["10.20.0.0/16"] # be-a, be-b 에서 오는 트래픽
+  target_tags   = ["ai"]
+
+  allow {
+    protocol = "tcp"
+    ports    = ["8000"]
+  }
+}
+
+# Health check 허용 (Google 프록시 IP 범위)
+resource "google_compute_firewall" "allow-health-check" {
+  name    = "allow-health-check"
+  network = module.vpc.network_self_link
+  project = var.project
+
+  direction     = "INGRESS"
+  source_ranges = ["130.211.0.0/22", "35.191.0.0/16"]
+  target_tags   = ["ai"]
+
+  allow {
+    protocol = "tcp"
+    ports    = ["8000"]
+  }
+}
