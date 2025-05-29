@@ -124,3 +124,40 @@ module "ai_b" {
   tags             = ["ai"]
 }
 
+# AI Instance Group
+resource "google_compute_instance_group" "ai_group_a" {
+  name      = "cafeboo-ai-group-a"
+  zone      = var.zone_A
+  project   = var.project
+  instances = [module.ai_a.instance_self_link]
+
+  named_port {
+    name = "http"
+    port = 8000
+  }
+}
+
+resource "google_compute_instance_group" "ai_group_b" {
+  name      = "cafeboo-ai-group-b"
+  zone      = var.zone_B
+  project   = var.project
+  instances = [module.ai_b.instance_self_link]
+
+  named_port {
+    name = "http"
+    port = 8000
+  }
+}
+
+module "internal_lb" {
+  source            = "../../modules/lb/internal"
+  name              = "cafeboo-internal"
+  project           = var.project
+  region            = var.region
+  network_self_link = module.vpc.network_self_link
+  subnet_self_link  = module.vpc.private_subnet_self_links["ai-a"]
+
+  instance_group_a = google_compute_instance_group.ai_group_a.self_link
+  instance_group_b = google_compute_instance_group.ai_group_b.self_link
+}
+
