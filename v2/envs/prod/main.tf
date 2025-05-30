@@ -84,6 +84,9 @@ module "backend_a" {
   subnet_self_link = module.vpc.private_subnet_self_links["be-a"]
   startup_script   = file("${path.module}/scripts/back.sh")
   tags             = ["backend"]
+  metadata = {
+    ssh-keys = var.ssh_public_key
+  }
 }
 
 module "backend_b" {
@@ -96,6 +99,10 @@ module "backend_b" {
   subnet_self_link = module.vpc.private_subnet_self_links["be-b"]
   startup_script   = file("${path.module}/scripts/back.sh")
   tags             = ["backend"]
+  metadata = {
+    ssh-keys = var.ssh_public_key
+  }
+}
 }
 
 ## AI
@@ -110,6 +117,9 @@ module "ai_a" {
   subnet_self_link = module.vpc.private_subnet_self_links["ai-a"]
   startup_script   = file("${path.module}/scripts/ai.sh")
   tags             = ["ai"]
+  metadata = {
+    ssh-keys = var.ssh_public_key
+  }
 }
 
 module "ai_b" {
@@ -122,6 +132,9 @@ module "ai_b" {
   subnet_self_link = module.vpc.private_subnet_self_links["ai-b"]
   startup_script   = file("${path.module}/scripts/ai.sh")
   tags             = ["ai"]
+  metadata = {
+    ssh-keys = var.ssh_public_key
+  }
 }
 
 # AI Instance Group

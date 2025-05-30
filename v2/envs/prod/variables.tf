@@ -27,3 +27,8 @@ variable "image" {
   description = "공통적으로 사용할 기본 VM 이미지"
   default     = "ubuntu-os-cloud/ubuntu-2204-lts"
 }
+
+variable "ssh_public_key" {
+  description = "SSH public key to access prod instances"
+  type        = string
+}

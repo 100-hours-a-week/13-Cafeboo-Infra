@@ -14,6 +14,8 @@ resource "google_compute_instance" "vm" {
     subnetwork = var.subnet_self_link
   }
 
+  metadata = var.metadata
+
   metadata_startup_script = var.startup_script
   tags                    = var.tags
 }
