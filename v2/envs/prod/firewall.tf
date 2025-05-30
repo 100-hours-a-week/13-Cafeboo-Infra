@@ -75,3 +75,34 @@ resource "google_compute_firewall" "allow-health-check" {
     ports    = ["8000"]
   }
 }
+
+# prod <-> shared 
+## ingress
+resource "google_compute_firewall" "ingress_from_shared" {
+  name    = "ingress-from-shared-vpc"
+  project = var.project
+  network = module.vpc.network_self_link
+
+  direction     = "INGRESS"
+  source_ranges = ["10.30.0.0/16"]
+
+  allow {
+    protocol = "all"
+  }
+}
+
+## egress
+resource "google_compute_firewall" "egress_to_shared" {
+  name    = "egress-to-shared-vpc"
+  project = var.project
+  network = module.vpc.network_self_link
+
+  direction          = "EGRESS"
+  destination_ranges = ["10.30.0.0/16"]
+
+  allow {
+    protocol = "all"
+  }
+}
+
+
