@@ -185,3 +185,19 @@ module "cloudsql" {
   project     = var.project
 }
 
+
+# NCC
+## Spoke 생성
+resource "google_network_connectivity_spoke" "connect_vpc" {
+  name     = "spoke-to-legacy-vpc"
+  project  = var.project
+  location = "global"
+
+  hub = "projects/elevated-valve-459107-h8/locations/global/hubs/shared-hub"
+
+  linked_vpc_network {
+    uri = module.vpc.network_self_link
+  }
+
+  description = "Spoke to connect Terraform-managed VPC to existing legacy VPC in same project"
+}
