@@ -161,3 +161,14 @@ module "internal_lb" {
   instance_group_b = google_compute_instance_group.ai_group_b.self_link
 }
 
+# Cloud SQL
+
+module "cloudsql" {
+  source      = "../../modules/cloudsql"
+  name_prefix = "cafeboo-sql"
+  region      = var.region
+  tier        = "db-custom-1-3840"
+  network     = module.vpc.network_self_link
+  project     = var.project
+}
+
