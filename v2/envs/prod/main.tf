@@ -175,6 +175,7 @@ module "cloudsql" {
   tier        = "db-custom-1-3840"
   network     = module.vpc.network_self_link
   project     = var.project
+  db_password = var.db_password
 }
 
 

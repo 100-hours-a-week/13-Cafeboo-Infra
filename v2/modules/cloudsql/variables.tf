@@ -23,3 +23,8 @@ variable "project" {
   type        = string
   description = "GCP project ID"
 }
+
+variable "db_password" {
+  type        = string
+  description = "DB password for cafeboo user"
+}

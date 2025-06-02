@@ -22,3 +22,16 @@ resource "google_sql_database_instance" "main" {
   deletion_protection = false
   depends_on          = [google_service_networking_connection.private_vpc_connection]
 }
+
+resource "google_sql_database" "cafeboo" {
+  name     = "cafeboo"
+  instance = google_sql_database_instance.main.name
+  project  = var.project
+}
+
+resource "google_sql_user" "cafeboo" {
+  name     = "cafeboo"
+  instance = google_sql_database_instance.main.name
+  password = var.db_password
+  project  = var.project
+}
