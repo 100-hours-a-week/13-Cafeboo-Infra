@@ -4,4 +4,3 @@ variable "region" {}
 variable "network_self_link" {}
 variable "subnet_self_link" {}
 variable "instance_group_a" {}
-variable "instance_group_b" {}

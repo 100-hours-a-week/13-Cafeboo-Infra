@@ -23,11 +23,6 @@ resource "google_compute_region_backend_service" "internal" {
     group          = var.instance_group_a
     balancing_mode = "CONNECTION"
   }
-
-  backend {
-    group          = var.instance_group_b
-    balancing_mode = "CONNECTION"
-  }
 }
 
 resource "google_compute_forwarding_rule" "internal" {

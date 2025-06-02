@@ -71,95 +71,88 @@ module "nat_b" {
   ]
 }
 
-# Compute Instance
+# MIG BE Group
 
-## Back
-module "backend_a" {
-  source           = "../../modules/compute_instance"
-  name             = "backend-a"
-  project          = var.project
-  zone             = var.zone_A
-  machine_type     = "e2-small"
-  image            = var.image
-  subnet_self_link = module.vpc.private_subnet_self_links["be-a"]
-  startup_script   = file("${path.module}/scripts/back.sh")
-  tags             = ["backend"]
+## health check
+resource "google_compute_health_check" "backend" {
+  name    = "backend-health-check-prod"
+  project = var.project
+
+  http_health_check {
+    port         = 8080
+    request_path = "/actuator/health"
+  }
+
+  check_interval_sec  = 30
+  timeout_sec         = 5
+  healthy_threshold   = 3
+  unhealthy_threshold = 10
+}
+
+## BE MIG
+module "backend_mig" {
+  source       = "../../modules/mig_instance_group"
+  name_prefix  = "backend-mig"
+  project      = var.project
+  region       = var.region
+  machine_type = "e2-small"
+  image        = var.image
+  subnetwork   = module.vpc.private_subnet_self_links["be-a"]
+  tags         = ["backend"]
+
+  startup_script = file("${path.module}/scripts/back.sh")
   metadata = {
     ssh-keys = var.ssh_public_key
   }
+  target_size = 2
+
+  health_check = google_compute_health_check.backend.self_link
+  distribution_zones = [
+    var.zone_A,
+    var.zone_B
+  ]
 }
 
-module "backend_b" {
-  source           = "../../modules/compute_instance"
-  name             = "backend-b"
-  project          = var.project
-  zone             = var.zone_B
-  machine_type     = "e2-small"
-  image            = var.image
-  subnet_self_link = module.vpc.private_subnet_self_links["be-b"]
-  startup_script   = file("${path.module}/scripts/back.sh")
-  tags             = ["backend"]
+# MIG AI Group
+
+## health check
+resource "google_compute_health_check" "ai" {
+  name    = "ai-health-check-prod"
+  project = var.project
+
+  http_health_check {
+    port         = 8000
+    request_path = "/health"
+  }
+
+  check_interval_sec  = 30
+  timeout_sec         = 5
+  healthy_threshold   = 3
+  unhealthy_threshold = 10
+}
+
+## AI MIG
+module "ai_mig" {
+  source         = "../../modules/mig_instance_group"
+  name_prefix    = "ai-mig"
+  project        = var.project
+  region         = var.region
+  machine_type   = "e2-medium"
+  image          = var.image
+  subnetwork     = module.vpc.private_subnet_self_links["ai-a"]
+  tags           = ["ai"]
+  startup_script = file("${path.module}/scripts/ai.sh")
+
   metadata = {
     ssh-keys = var.ssh_public_key
   }
-}
-}
 
-## AI
-
-module "ai_a" {
-  source           = "../../modules/compute_instance"
-  name             = "ai-a"
-  project          = var.project
-  zone             = var.zone_A
-  machine_type     = "e2-small"
-  image            = var.image
-  subnet_self_link = module.vpc.private_subnet_self_links["ai-a"]
-  startup_script   = file("${path.module}/scripts/ai.sh")
-  tags             = ["ai"]
-  metadata = {
-    ssh-keys = var.ssh_public_key
-  }
-}
-
-module "ai_b" {
-  source           = "../../modules/compute_instance"
-  name             = "ai-b"
-  project          = var.project
-  zone             = var.zone_B
-  machine_type     = "e2-small"
-  image            = var.image
-  subnet_self_link = module.vpc.private_subnet_self_links["ai-b"]
-  startup_script   = file("${path.module}/scripts/ai.sh")
-  tags             = ["ai"]
-  metadata = {
-    ssh-keys = var.ssh_public_key
-  }
-}
-
-# AI Instance Group
-resource "google_compute_instance_group" "ai_group_a" {
-  name      = "cafeboo-ai-group-a"
-  zone      = var.zone_A
-  project   = var.project
-  instances = [module.ai_a.instance_self_link]
-
-  named_port {
-    name = "http"
-    port = 8000
-  }
-}
-
-resource "google_compute_instance_group" "ai_group_b" {
-  name      = "cafeboo-ai-group-b"
-  zone      = var.zone_B
-  project   = var.project
-  instances = [module.ai_b.instance_self_link]
-
-  named_port {
-    name = "http"
-    port = 8000
-  }
+  target_size  = 2
+  health_check = google_compute_health_check.ai.self_link
+  distribution_zones = [
+    var.zone_A,
+    var.zone_B
+  ]
 }
 
 module "internal_lb" {
@@ -170,8 +163,7 @@ module "internal_lb" {
   network_self_link = module.vpc.network_self_link
   subnet_self_link  = module.vpc.private_subnet_self_links["ai-a"]
 
-  instance_group_a = google_compute_instance_group.ai_group_a.self_link
-  instance_group_b = google_compute_instance_group.ai_group_b.self_link
+  instance_group_a = module.ai_mig.instance_group_self_link
 }
 
 # Cloud SQL

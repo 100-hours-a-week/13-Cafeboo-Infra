@@ -76,6 +76,22 @@ resource "google_compute_firewall" "allow-health-check" {
   }
 }
 
+resource "google_compute_firewall" "allow-health-check-backend" {
+  name    = "allow-health-check-backend"
+  network = module.vpc.network_self_link
+  project = var.project
+
+  direction     = "INGRESS"
+  source_ranges = ["130.211.0.0/22", "35.191.0.0/16"]
+
+  target_tags = ["backend"]
+
+  allow {
+    protocol = "tcp"
+    ports    = ["8080"]
+  }
+}
+
 # prod <-> shared 
 ## ingress
 resource "google_compute_firewall" "ingress_from_shared" {
