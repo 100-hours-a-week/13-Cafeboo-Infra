@@ -6,7 +6,7 @@ resource "google_compute_firewall" "allow_ssh" {
 
   direction     = "INGRESS"
   source_ranges = ["0.0.0.0/0"]
-  target_tags   = ["backend", "ai"]
+  target_tags   = ["backend", "ai", "redis"]
 
   allow {
     protocol = "tcp"
@@ -121,4 +121,19 @@ resource "google_compute_firewall" "egress_to_shared" {
   }
 }
 
+#Redis
+## 내부 접근용
+resource "google_compute_firewall" "allow_internal_redis" {
+  name    = "allow-internal-redis"
+  network = module.vpc.network_self_link
+  project = var.project
 
+  direction     = "INGRESS"
+  source_ranges = ["10.20.0.0/16"]
+  target_tags   = ["redis"]
+
+  allow {
+    protocol = "tcp"
+    ports    = ["6379"]
+  }
+}

@@ -194,3 +194,23 @@ resource "google_network_connectivity_spoke" "connect_vpc" {
 
   description = "Spoke to connect Terraform-managed VPC to existing legacy VPC in same project"
 }
+
+# Redis
+module "redis" {
+  source           = "../../modules/compute_instance"
+  name             = "redis-vm"
+  project          = var.project
+  zone             = var.zone_A
+  machine_type     = "e2-standard-2"
+  image            = var.image
+  subnet_self_link = module.vpc.private_subnet_self_links["be-a"]
+  tags             = ["redis"]
+
+  metadata = {
+    ssh-keys = var.ssh_public_key
+  }
+
+  startup_script = templatefile("${path.module}/scripts/redis.sh.tpl", {
+    redis_password = var.redis_password
+  })
+}
