@@ -12,6 +12,16 @@ systemctl enable docker
 # 디렉토리 생성
 mkdir -p /etc/prometheus
 mkdir -p /etc/grafana
+mkdir -p /opt/loki
+
+mkdir -p /tmp/loki/index
+mkdir -p /tmp/loki/boltdb-cache
+mkdir -p /tmp/loki/chunks
+mkdir -p /tmp/loki/compactor
+mkdir -p /tmp/loki/wal
+
+chown -R 10001:10001 /tmp/loki
+
 # prometheus.yml 직접 생성 (zone 명시)
 cat > /etc/prometheus/prometheus.yml <<EOF
 global:
@@ -55,6 +65,68 @@ scrape_configs:
     metrics_path: '/metrics'
 EOF
 
+# Loki config 생성
+cat > /opt/loki/loki-config.yaml <<EOF
+auth_enabled: false
+
+server:
+  http_listen_port: 3100
+  grpc_listen_port: 9095
+
+ingester:
+  wal:
+    enabled: true
+    dir: /tmp/loki/wal
+
+  lifecycler:
+    ring:
+      kvstore:
+        store: inmemory
+      replication_factor: 1
+    final_sleep: 0s
+
+  chunk_idle_period: 5m
+  max_chunk_age: 1h
+  chunk_target_size: 1048576
+  chunk_retain_period: 30s
+  max_transfer_retries: 0
+
+schema_config:
+  configs:
+    - from: 2020-10-24
+      store: boltdb-shipper
+      object_store: filesystem
+      schema: v11
+      index:
+        prefix: index_
+        period: 24h
+
+storage_config:
+  boltdb_shipper:
+    active_index_directory: /tmp/loki/index
+    cache_location:           /tmp/loki/boltdb-cache
+    shared_store:            filesystem
+
+  filesystem:
+    directory: /tmp/loki/chunks
+
+limits_config:
+  enforce_metric_name:        false
+  reject_old_samples:         true
+  reject_old_samples_max_age: 168h
+
+chunk_store_config:
+  max_look_back_period: 0s
+
+table_manager:
+  retention_deletes_enabled: false
+  retention_period:          0s
+
+compactor:
+  working_directory: /tmp/loki/compactor
+  shared_store:      filesystem
+EOF
+
 
 # Prometheus, Grafana 컨테이너 실행
 docker run -d \
@@ -71,7 +143,23 @@ docker run -d \
   -p 3000:3000 \
   grafana/grafana
 
+docker run -d \
+  --name loki \
+  --restart unless-stopped \
+  -p 3100:3100 \
+  -v /opt/loki/loki-config.yaml:/etc/loki/loki-config.yaml \
+  -v /tmp/loki:/tmp/loki \
+  grafana/loki:2.9.4 \
+  -config.file=/etc/loki/loki-config.yaml
+
+sleep 10
+
 curl -X POST \
   -H "Content-Type: application/json" \
   -d '{"name":"Prometheus","type":"prometheus","url":"http://localhost:9090","access":"proxy"}' \
   http://admin:admin@localhost:3000/api/datasources 
+
+curl -X POST \
+  -H "Content-Type: application/json" \
+  -d '{"name":"Loki","type":"loki","url":"http://localhost:3100","access":"proxy"}' \
+  http://admin:admin@localhost:3000/api/datasources
