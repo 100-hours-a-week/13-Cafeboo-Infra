@@ -19,6 +19,10 @@ resource "google_compute_instance_template" "this" {
   metadata = var.metadata
 
   metadata_startup_script = var.startup_script
+
+  labels = {
+    managed-by-mig = "true"
+  }
 }
 
 resource "google_compute_region_instance_group_manager" "this" {
