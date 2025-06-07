@@ -166,8 +166,18 @@ module "internal_lb" {
   instance_group_a = module.ai_mig.instance_group_self_link
 }
 
-# Cloud SQL
+# Https lb
+module "https_lb" {
+  source                 = "../../modules/lb/https"
+  name                   = "cafeboo-frontend"
+  project                = var.project
+  gcs_bucket_name        = "frontend-cafeboo-prod"
+  domain                 = "v2.cafeboo.com"
+  backend_health_check   = google_compute_health_check.backend.self_link
+  backend_instance_group = module.backend_mig.instance_group_self_link
+}
 
+# Cloud SQL
 module "cloudsql" {
   source      = "../../modules/cloudsql"
   name_prefix = "cafeboo-sql"

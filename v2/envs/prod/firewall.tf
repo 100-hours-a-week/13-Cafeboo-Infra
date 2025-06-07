@@ -137,19 +137,3 @@ resource "google_compute_firewall" "allow_internal_redis" {
     ports    = ["6379"]
   }
 }
-
-# loki 방화벽
-resource "google_compute_firewall" "allow_loki_port" {
-  name    = "allow-loki-3100"
-  network = module.vpc.network_self_link
-  project = var.project
-
-  direction     = "INGRESS"
-  source_ranges = ["10.20.0.0/16", "10.30.0.0/16"]
-  target_tags   = ["loki"]
-
-  allow {
-    protocol = "tcp"
-    ports    = ["3100"]
-  }
-}

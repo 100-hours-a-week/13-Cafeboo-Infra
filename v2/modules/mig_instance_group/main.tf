@@ -35,6 +35,11 @@ resource "google_compute_region_instance_group_manager" "this" {
     instance_template = google_compute_instance_template.this.self_link
   }
 
+  named_port {
+    name = "http"
+    port = 8080
+  }
+
   target_size = var.target_size
 
   distribution_policy_zones = var.distribution_zones
