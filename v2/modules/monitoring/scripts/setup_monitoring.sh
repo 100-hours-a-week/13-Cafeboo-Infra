@@ -46,6 +46,7 @@ scrape_configs:
       - source_labels: [__meta_gce_zone]
         target_label: zone
     metrics_path: '/actuator/prometheus'
+
   - job_name: 'fastapi-ai'
     gce_sd_configs:
       - project: "elevated-valve-459107-h8"
@@ -63,6 +64,40 @@ scrape_configs:
       - source_labels: [__meta_gce_zone]
         target_label: zone
     metrics_path: '/metrics'
+
+  - job_name: 'node-exporter-be'
+    gce_sd_configs:
+      - project: "elevated-valve-459107-h8"
+        zone: "asia-northeast3-a"
+        port: 9100
+        filter: '(name eq "backend-mig-.*")'
+      - project: "elevated-valve-459107-h8"
+        zone: "asia-northeast3-b"
+        port: 9100
+        filter: '(name eq "backend-mig-.*")'
+    relabel_configs:
+      - source_labels: [__meta_gce_private_ip]
+        target_label: __address__
+        replacement: '\$1:9100'
+      - source_labels: [__meta_gce_zone]
+        target_label: zone
+
+  - job_name: 'node-exporter-ai'
+    gce_sd_configs:
+      - project: "elevated-valve-459107-h8"
+        zone: "asia-northeast3-a"
+        port: 9100
+        filter: '(name eq "ai-mig-.*")'
+      - project: "elevated-valve-459107-h8"
+        zone: "asia-northeast3-b"
+        port: 9100
+        filter: '(name eq "ai-mig-.*")'
+    relabel_configs:
+      - source_labels: [__meta_gce_private_ip]
+        target_label: __address__
+        replacement: '\$1:9100'
+      - source_labels: [__meta_gce_zone]
+        target_label: zone
 EOF
 
 # Loki config 생성
