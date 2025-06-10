@@ -36,6 +36,7 @@ resource "google_compute_instance" "monitoring" {
   network_interface {
     network    = data.google_compute_network.shared_vpc.self_link
     subnetwork = data.google_compute_subnetwork.monitoring_subnet.self_link
+    network_ip = google_compute_address.monitoring_ip.address
   }
 
   service_account {
@@ -86,4 +87,13 @@ resource "google_compute_subnetwork_iam_member" "monitoring_network_user" {
   subnetwork = data.google_compute_subnetwork.monitoring_subnet.name
   role       = "roles/compute.networkUser"
   member     = "serviceAccount:${google_service_account.monitoring_service_account.email}"
+}
+
+resource "google_compute_address" "monitoring_ip" {
+  name         = "monitoring-fixed-ip"
+  address_type = "INTERNAL"
+  address      = "10.30.2.19"
+  region       = var.region
+  subnetwork   = "shared-private-subnet"
+  project      = var.project_id
 }
