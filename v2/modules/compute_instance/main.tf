@@ -12,6 +12,7 @@ resource "google_compute_instance" "vm" {
 
   network_interface {
     subnetwork = var.subnet_self_link
+    network_ip = var.network_ip != null ? var.network_ip : null
   }
 
   metadata = var.metadata

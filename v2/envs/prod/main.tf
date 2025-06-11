@@ -215,6 +215,7 @@ module "redis" {
   image            = var.image
   subnet_self_link = module.vpc.private_subnet_self_links["be-a"]
   tags             = ["redis"]
+  network_ip       = "10.20.10.2"
 
   metadata = {
     ssh-keys = var.ssh_public_key

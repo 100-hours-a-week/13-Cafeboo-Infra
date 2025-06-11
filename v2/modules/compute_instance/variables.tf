@@ -14,3 +14,8 @@ variable "metadata" {
   type    = map(string)
   default = {}
 }
+variable "network_ip" {
+  type        = string
+  description = "Static internal IP for the VM (optional)"
+  default     = null
+}
