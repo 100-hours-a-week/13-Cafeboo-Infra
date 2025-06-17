@@ -18,10 +18,7 @@ variable "network_self_link" {
   type        = string
 }
 
-variable "subnetworks" {
-  type = list(object({
-    name                    = string
-    source_ip_ranges_to_nat = list(string)
-  }))
-  description = "List of subnetworks to apply NAT to"
+variable "subnetwork_name" {
+  description = "NAT 대상 서브넷 이름 (name만, self_link 아님)"
+  type        = string
 }

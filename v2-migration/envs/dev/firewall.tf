@@ -42,6 +42,8 @@ resource "google_compute_firewall" "allow_iap_ssh" {
   direction     = "INGRESS"
   source_ranges = ["35.235.240.0/20"] # IAP 고정 IP 범위
   priority      = 1000
+  target_tags = ["iap-access"]
+
 }
 
 # Health check용 허용
@@ -76,4 +78,18 @@ resource "google_compute_firewall" "allow_from_shared" {
   direction = "INGRESS"
   priority  = 1000
 }
+
+resource "google_compute_firewall" "allow_mysql" {
+  name    = "allow-mysql"
+  network = module.vpc.network_self_link
+
+  allow {
+    protocol = "tcp"
+    ports    = ["3306"]
+  }
+
+  source_ranges = ["0.0.0.0/0"]
+  target_tags   = ["mysql-enabled"]
+}
+
 

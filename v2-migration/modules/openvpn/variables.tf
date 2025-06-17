@@ -28,7 +28,7 @@ variable "instance_name" {
   type        = string
 }
 
-variable "startup_script_path" {
+variable "startup_script" {
   description = "Path to the OpenVPN install startup script"
   type        = string
 }

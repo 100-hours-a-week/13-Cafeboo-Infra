@@ -31,12 +31,7 @@ module "nat" {
   project           = var.project
   region            = var.region
   network_self_link = module.vpc.network_self_link
-  subnetworks = [
-    {
-      name                    = module.vpc.private_subnet_self_link
-      source_ip_ranges_to_nat = ["ALL_IP_RANGES"]
-    }
-  ]
+  subnetwork_name   = module.vpc.private_subnet_name
 
 }
 
@@ -50,9 +45,23 @@ module "dev_vm" {
   project             = var.project
   image               = "ubuntu-os-cloud/ubuntu-2204-lts"
   subnet_self_link    = module.vpc.public_subnet_self_link
-  metadata            = {}
-  startup_script      = file("${path.module}/scripts/setup.sh")
-  tags                = ["dev"]
+  metadata = {
+    "startup-script" = file("${path.module}/scripts/setup.sh")
+  }
+  tags = ["dev", "http-server","iap-access", "mysql-enabled"]
+  external_ip         = data.google_compute_address.dev_ip.address
+
+  service_account = {
+    email  = "terraform@master-isotope-462503-m9.iam.gserviceaccount.com"
+    scopes = ["cloud-platform"]
+  }
+}
+
+# 임시 dev 외부 IP
+data "google_compute_address" "dev_ip" {
+  name   = "dev-vm-ip" 
+  region = var.region
+  project = var.project
 }
 
 # HTTPS Load Balancer
@@ -70,7 +79,7 @@ module "lb" {
 
 ## health check
 resource "google_compute_health_check" "backend" {
-  name    = "backend-health-check-prod"
+  name    = "backend-health-check-dev"
   project = var.project
 
   http_health_check {
@@ -98,4 +107,18 @@ resource "google_network_connectivity_spoke" "dev_spoke" {
   description = "Spoke to connect dev VPC to shared NCC Hub"
 }
 
+# Artifact Registry
+module "artifact_registry_backend" {
+  source   = "../../modules/gar"
+  name     = "backend"
+  region   = "asia-northeast3"
+  format   = "DOCKER"
+}
+
+module "artifact_registry_ai" {
+  source   = "../../modules/gar"
+  name     = "ai"
+  region   = "asia-northeast3"
+  format   = "DOCKER"
+}
 

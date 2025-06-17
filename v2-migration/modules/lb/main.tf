@@ -92,7 +92,7 @@ resource "google_compute_global_forwarding_rule" "https_rule" {
 resource "google_storage_bucket" "frontend" {
   name          = var.frontend_bucket_name
   location      = var.region
-  force_destroy = false
+  force_destroy = true
   uniform_bucket_level_access = true
 }
 

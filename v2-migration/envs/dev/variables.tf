@@ -28,4 +28,11 @@ variable "hub_id" {
   default     = "projects/master-isotope-462503-m9/locations/global/hubs/v2-shared-hub"
 }
 
+variable "external_ip" {
+  description = "Optional static external IP address"
+  type        = string
+  default = "null"
+}
+
+
 

@@ -63,7 +63,7 @@ module "openvpn" {
   subnet     = module.vpc.public_subnet_self_link
   static_ip  = data.google_compute_address.openvpn_ip.address
   instance_name = "openvpn-vm"
-  startup_script_path = "${path.module}/scripts/openvpn_setup.sh"
+  startup_script = file("${path.module}/scripts/install-openvpn.sh")
   tags       = ["openvpn-server"]
 }
 
