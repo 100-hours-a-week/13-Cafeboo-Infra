@@ -67,15 +67,12 @@ module "openvpn" {
   tags       = ["openvpn-server"]
 }
 
-/*
 # 모니터링 서버
 module "monitoring" {
   source             = "../../modules/monitoring"
   project_id         = var.project
   host_project_id    = var.project
   service_project_id = var.project
-  shared_vpc_name    = "shared-vpc"
-  subnet_name        = "shared-private-subnet"
   region             = var.region
   zone               = var.zone
 
@@ -85,6 +82,9 @@ module "monitoring" {
   network_tags          = ["monitoring", "prometheus", "grafana", "loki"]
   monitoring_ports      = ["9090", "3000"]
   allowed_source_ranges = ["10.0.0.0/8"]
+
+  vpc_network_self_link = module.vpc.network_self_link
+  subnet_self_link      = module.vpc.private_subnet_self_link
 }
-*/
+
 
