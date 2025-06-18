@@ -14,3 +14,7 @@ terraform-key-cafeboo33.json
 
 # macOS
 .DS_Store
+
+#model files
+embedding_model.tar.gz
+best_model.pt
