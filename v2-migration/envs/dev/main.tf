@@ -48,7 +48,7 @@ module "dev_vm" {
   metadata = {
     "startup-script" = file("${path.module}/scripts/setup.sh")
   }
-  tags = ["dev", "http-server","iap-access", "mysql-enabled"]
+  tags = ["dev","http-server","iap-access", "mysql-enabled", "allow-vpn-to-ai"]
   external_ip         = data.google_compute_address.dev_ip.address
 
   service_account = {

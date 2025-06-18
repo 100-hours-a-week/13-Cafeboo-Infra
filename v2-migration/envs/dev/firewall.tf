@@ -92,4 +92,20 @@ resource "google_compute_firewall" "allow_mysql" {
   target_tags   = ["mysql-enabled"]
 }
 
+resource "google_compute_firewall" "allow_vpn_to_ai_8000" {
+  name    = "allow-vpn-to-ai-8000"
+  network = module.vpc.network_self_link
 
+  description = "vpn을 통한 ai 서버 접속 허용"
+  direction   = "INGRESS"
+  priority    = 1000
+
+  allow {
+    protocol = "tcp"
+    ports    = ["8000"]
+  }
+
+  source_ranges = ["10.30.1.3/32"]
+  target_tags = ["allow-vpn-to-ai"]
+
+}

@@ -17,6 +17,7 @@ sudo mysql -u root <<EOF
 CREATE DATABASE IF NOT EXISTS cafeboo CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 
 CREATE USER 'cafeboo'@'%' IDENTIFIED BY 'cafeboo123';
+ALTER USER 'cafeboo'@'%' IDENTIFIED WITH mysql_native_password BY 'cafeboo123';
 GRANT ALL PRIVILEGES ON *.* TO 'cafeboo'@'%' WITH GRANT OPTION;
 FLUSH PRIVILEGES;
 EOF
