@@ -94,6 +94,19 @@ resource "google_storage_bucket" "frontend" {
   location      = var.region
   force_destroy = true
   uniform_bucket_level_access = true
+
+  website {
+    main_page_suffix = "index.html"
+    not_found_page   = "index.html"
+  }
+}
+
+# 퍼블릭 읽기 권한 부여 (AllUsers → objectViewer)
+resource "google_storage_bucket_iam_binding" "frontend_public_read" {
+  bucket = google_storage_bucket.frontend.name
+
+  role    = "roles/storage.objectViewer"
+  members = ["allUsers"]
 }
 
 # 프론트엔드 Backend Bucket
