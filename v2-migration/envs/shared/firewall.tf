@@ -97,3 +97,18 @@ resource "google_compute_firewall" "allow_openvpn_admin" {
     ports    = ["943"]
   }
 }
+
+# SSH 허용
+resource "google_compute_firewall" "allow_ssh" {
+  name    = "shared-vpc-allow-ssh"
+  network = module.vpc.network_self_link
+
+  allow {
+    protocol = "tcp"
+    ports    = ["22"]
+  }
+
+  direction     = "INGRESS"
+  source_ranges = ["0.0.0.0/0"]
+  priority      = 65534
+}
