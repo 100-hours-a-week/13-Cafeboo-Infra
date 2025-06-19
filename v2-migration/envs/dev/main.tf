@@ -45,9 +45,15 @@ module "dev_vm" {
   project             = var.project
   image               = "ubuntu-os-cloud/ubuntu-2204-lts"
   subnet_self_link    = module.vpc.public_subnet_self_link
+  
   metadata = {
-    "startup-script" = file("${path.module}/scripts/setup.sh")
+    "startup-script" = templatefile("${path.module}/scripts/setup.sh.tpl", {
+      loki_url   = "http://10.30.2.19:3100/loki/api/v1/push",
+      instance   = "dev-private-vm",
+      job_label  = "cafeboo"
+    })
   }
+
   tags = ["dev","http-server","iap-access", "mysql-enabled", "allow-vpn-to-ai"]
   external_ip         = data.google_compute_address.dev_ip.address
 
@@ -133,16 +139,4 @@ module "ai_models" {
   best_model_path      = "${path.module}/../../files/best_model.pt"
   make_public          = true
 }
-
-module "promtail" {
-  source                 = "../../modules/promtail"
-  zone                   = var.zone
-  network                = module.vpc.network_name
-  subnetwork             = module.vpc.private_subnet_name
-  service_account_email  = "terraform@master-isotope-462503-m9.iam.gserviceaccount.com"
-  loki_url               = "http://10.30.2.19:3100/loki/api/v1/push"
-  instance_label         = "dev-private-vm"
-  job_label              = "cafeboo"
-}
-
 
