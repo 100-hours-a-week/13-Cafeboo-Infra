@@ -122,3 +122,27 @@ module "artifact_registry_ai" {
   format   = "DOCKER"
 }
 
+# AI Models
+module "ai_models" {
+  source      = "../../modules/ai-models"
+  project     = var.project
+  region      = var.region
+  bucket_name = "ai_model_cafeboo"
+
+  embedding_model_path = "${path.module}/../../files/embedding_model.tar.gz"
+  best_model_path      = "${path.module}/../../files/best_model.pt"
+  make_public          = true
+}
+
+module "promtail" {
+  source                 = "../../modules/promtail"
+  zone                   = var.zone
+  network                = module.vpc.network_name
+  subnetwork             = module.vpc.private_subnet_name
+  service_account_email  = "terraform@master-isotope-462503-m9.iam.gserviceaccount.com"
+  loki_url               = "http://10.30.2.19:3100/loki/api/v1/push"
+  instance_label         = "dev-private-vm"
+  job_label              = "cafeboo"
+}
+
+
