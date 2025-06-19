@@ -1,7 +1,12 @@
-# 시스템 업데이트 및 도커 설치
+set -e
+
+# 시스템 업데이트 & Docker 설치
+
+
 apt-get update
 apt-get upgrade -y
 apt-get install -y apt-transport-https ca-certificates curl software-properties-common
+
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
 add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
 apt-get update
@@ -84,7 +89,7 @@ scrape_configs:
 
   - job_name: 'node-exporter-ai'
     gce_sd_configs:
-      - project: "emaster-isotope-462503-m9"
+      - project: "master-isotope-462503-m9"
         zone: "asia-northeast3-a"
         port: 9100
         filter: '(name eq "ai-mig-.*")'
@@ -162,6 +167,34 @@ compactor:
   shared_store:      filesystem
 EOF
 
+# Scouter Server 설치 & 기동
+SCOUTER_VER=2.20.0
+SCOUTER_DIR=/opt/scouter-server
+
+apt-get install -y openjdk-11-jre
+
+# Scouter 다운르도 및 압축 해제
+sudo mkdir -p $SCOUTER_DIR
+sudo curl -fsSL https://github.com/scouter-project/scouter/releases/download/v${SCOUTER_VER}/scouter-all-${SCOUTER_VER}.tar.gz -o /tmp/scouter.tar.gz
+sudo tar -xzf /tmp/scouter.tar.gz -C $SCOUTER_DIR --strip-components=1
+sudo rm /tmp/scouter.tar.gz
+
+# 데이터/로그/설정 디렉토리 생성 및 권한 부여
+sudo mkdir -p $SCOUTER_DIR/server/{data,log,conf,logs}
+sudo chown -R $(whoami):$(whoami) $SCOUTER_DIR
+
+# 설정 파일
+cat > $SCOUTER_DIR/server/conf/scouter.conf <<EOF
+scouter.server.data.dir=$SCOUTER_DIR/server/data
+scouter.server.log.level=INFO
+EOF
+
+# 기동
+cd $SCOUTER_DIR/server
+nohup java -Xmx1024m \
+  -classpath "./scouter-server-boot.jar:./lib/*:../webapp" \
+  scouter.boot.Boot \
+  > ./log/scouter-server.log 2>&1 &
 
 # Prometheus, Grafana 컨테이너 실행
 docker run -d \
