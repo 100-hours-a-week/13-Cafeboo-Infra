@@ -51,6 +51,7 @@ module "dev_vm" {
       loki_url   = "http://10.30.2.19:3100/loki/api/v1/push",
       instance   = "dev-private-vm",
       job_label  = "cafeboo"
+      DB_PASSWORD = var.db_password
     })
   }
 

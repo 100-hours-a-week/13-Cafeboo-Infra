@@ -16,14 +16,14 @@ sudo apt install -y mysql-server
 sudo mysql -u root <<EOF
 CREATE DATABASE IF NOT EXISTS cafeboo CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 
-CREATE USER 'cafeboo'@'%' IDENTIFIED BY 'cafeboo123';
-ALTER USER 'cafeboo'@'%' IDENTIFIED WITH mysql_native_password BY 'cafeboo123';
+CREATE USER 'cafeboo'@'%' IDENTIFIED BY "${DB_PASSWORD}";
+ALTER USER 'cafeboo'@'%' IDENTIFIED WITH mysql_native_password BY "${DB_PASSWORD}";
 GRANT ALL PRIVILEGES ON *.* TO 'cafeboo'@'%' WITH GRANT OPTION;
 FLUSH PRIVILEGES;
 EOF
 
 echo "💾 dump.sql을 데이터베이스에 복원 중..."
-sudo mysql -u cafeboo -pcafeboo123 cafeboo < ~/dump.sql
+sudo mysql -u cafeboo -p"${DB_PASSWORD}" cafeboo < ~/dump.sql
 
 echo "✅ MySQL 설정 및 데이터 복원 완료!"
 
