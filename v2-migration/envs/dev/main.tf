@@ -45,9 +45,16 @@ module "dev_vm" {
   project             = var.project
   image               = "ubuntu-os-cloud/ubuntu-2204-lts"
   subnet_self_link    = module.vpc.public_subnet_self_link
+  
   metadata = {
-    "startup-script" = file("${path.module}/scripts/setup.sh")
+    "startup-script" = templatefile("${path.module}/scripts/setup.sh.tpl", {
+      loki_url   = "http://10.30.2.19:3100/loki/api/v1/push",
+      instance   = "dev-private-vm",
+      job_label  = "cafeboo"
+      DB_PASSWORD = var.db_password
+    })
   }
+
   tags = ["dev","http-server","iap-access", "mysql-enabled", "allow-vpn-to-ai"]
   external_ip         = data.google_compute_address.dev_ip.address
 
@@ -120,5 +127,17 @@ module "artifact_registry_ai" {
   name     = "ai"
   region   = "asia-northeast3"
   format   = "DOCKER"
+}
+
+# AI Models
+module "ai_models" {
+  source      = "../../modules/ai-models"
+  project     = var.project
+  region      = var.region
+  bucket_name = "ai_model_cafeboo"
+
+  embedding_model_path = "${path.module}/../../files/embedding_model.tar.gz"
+  best_model_path      = "${path.module}/../../files/best_model.pt"
+  make_public          = true
 }
 

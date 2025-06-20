@@ -34,5 +34,12 @@ variable "external_ip" {
   default = "null"
 }
 
+variable "db_password" {
+  description = "MySQL user password"
+  type        = string
+  sensitive   = true
+}
+
+
 
 
