@@ -8,7 +8,7 @@ provider "google" {
 # Backend
 terraform {
   backend "gcs" {
-    bucket      = "cafeboo-v2-prod-tfstate"
+    bucket      = "cafeboo-v2-5-prod-tfstate"
     prefix      = "v2/prod"
     credentials = "../../terraform-key.json"
   }
@@ -75,7 +75,7 @@ module "nat_b" {
 
 ## health check
 resource "google_compute_health_check" "backend" {
-  name    = "backend-health-check-prod"
+  name    = "backend-health-check-prod-1"
   project = var.project
 
   http_health_check {
@@ -171,8 +171,8 @@ module "https_lb" {
   source                 = "../../modules/lb/https"
   name                   = "cafeboo-frontend"
   project                = var.project
-  gcs_bucket_name        = "frontend-cafeboo-prod"
-  domain                 = "v2.cafeboo.com"
+  gcs_bucket_name        = "v2-prod-frontend-bucket"
+  domain                 = "cafeboo.com"
   backend_health_check   = google_compute_health_check.backend.self_link
   backend_instance_group = module.backend_mig.instance_group_self_link
 }
@@ -192,17 +192,17 @@ module "cloudsql" {
 # NCC
 ## Spoke 생성
 resource "google_network_connectivity_spoke" "connect_vpc" {
-  name     = "spoke-to-legacy-vpc"
+  name     = "prod-spoke-to-shared-vpc"
   project  = var.project
   location = "global"
 
-  hub = "projects/elevated-valve-459107-h8/locations/global/hubs/shared-hub"
+  hub = "projects/master-isotope-462503-m9/locations/global/hubs/v2-shared-hub"
 
   linked_vpc_network {
     uri = module.vpc.network_self_link
   }
 
-  description = "Spoke to connect Terraform-managed VPC to existing legacy VPC in same project"
+  description = "prod vpc connect"
 }
 
 # Redis

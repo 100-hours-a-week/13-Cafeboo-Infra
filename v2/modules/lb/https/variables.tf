@@ -27,3 +27,9 @@ variable "backend_instance_group" {
   description = "Self link of backend MIG instance group"
   type        = string
 }
+
+variable "region" {
+  type        = string
+  description = "GCP 리전"
+  default     = "asia-northeast3"
+}
