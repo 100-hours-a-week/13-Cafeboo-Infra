@@ -187,6 +187,14 @@ sudo chown -R $(whoami):$(whoami) $SCOUTER_DIR
 cat > $SCOUTER_DIR/server/conf/scouter.conf <<EOF
 scouter.server.data.dir=$SCOUTER_DIR/server/data
 scouter.server.log.level=INFO
+
+# UDP 메트릭 수집(heartbeat 등) – 모든 인터페이스에서 수신
+scouter.server.udp.listen.ip=0.0.0.0
+scouter.server.udp.listen.port=6100
+
+# TCP 오브젝트 전송(List, Object 조회) – 모든 인터페이스에서 수신
+scouter.server.tcp.listen.ip=0.0.0.0
+scouter.server.tcp.listen.port=6188
 EOF
 
 # 기동
