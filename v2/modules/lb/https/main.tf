@@ -1,5 +1,5 @@
 resource "google_compute_global_address" "https_lb_ip" {
-  name    = var.name
+  name    = "httpslb-ip"
   project = var.project
 }
 
@@ -55,6 +55,7 @@ resource "google_compute_global_forwarding_rule" "https" {
   ip_protocol           = "TCP"
   ip_address            = google_compute_global_address.https_lb_ip.address
   project               = var.project
+  ip_address            = google_compute_global_address.https_lb_ip.address
 }
 
 resource "google_compute_backend_service" "backend" {

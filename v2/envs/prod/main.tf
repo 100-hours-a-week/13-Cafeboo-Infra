@@ -83,7 +83,7 @@ resource "google_compute_health_check" "backend" {
     request_path = "/actuator/health"
   }
 
-  check_interval_sec  = 30
+  check_interval_sec  = 60
   timeout_sec         = 5
   healthy_threshold   = 3
   unhealthy_threshold = 10
@@ -164,6 +164,7 @@ module "internal_lb" {
   subnet_self_link  = module.vpc.private_subnet_self_links["ai-a"]
 
   instance_group_a = module.ai_mig.instance_group_self_link
+  ip_address       = "10.20.20.4"
 }
 
 # Https lb
