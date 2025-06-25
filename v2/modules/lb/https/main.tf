@@ -12,6 +12,24 @@ resource "google_compute_managed_ssl_certificate" "cafeboo_ssl" {
   }
 }
 
+resource "google_storage_bucket" "frontend_bucket" {
+  name                        = "v2-prod-frontend-bucket"
+  location                    = var.region
+  project                     = var.project
+  force_destroy               = true
+  uniform_bucket_level_access = true
+  website {
+    main_page_suffix = "index.html"
+    not_found_page   = "404.html"
+  }
+}
+
+resource "google_storage_bucket_iam_member" "public_read" {
+  bucket = google_storage_bucket.frontend_bucket.name
+  role   = "roles/storage.objectViewer"
+  member = "allUsers"
+}
+
 resource "google_compute_backend_bucket" "frontend" {
   name        = "frontend-bucket-backend"
   bucket_name = var.gcs_bucket_name
