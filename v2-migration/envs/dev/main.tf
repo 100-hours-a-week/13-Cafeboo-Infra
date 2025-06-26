@@ -129,15 +129,4 @@ module "artifact_registry_ai" {
   format   = "DOCKER"
 }
 
-# AI Models
-module "ai_models" {
-  source      = "../../modules/ai-models"
-  project     = var.project
-  region      = var.region
-  bucket_name = "ai_model_cafeboo"
-
-  embedding_model_path = "${path.module}/../../files/embedding_model.tar.gz"
-  best_model_path      = "${path.module}/../../files/best_model.pt"
-  make_public          = true
-}
 
