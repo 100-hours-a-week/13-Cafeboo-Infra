@@ -1,5 +1,5 @@
 resource "google_compute_global_address" "https_lb_ip" {
-  name    = var.name
+  name    = "httpslb-ip"
   project = var.project
 }
 
@@ -10,6 +10,24 @@ resource "google_compute_managed_ssl_certificate" "cafeboo_ssl" {
   managed {
     domains = [var.domain]
   }
+}
+
+resource "google_storage_bucket" "frontend_bucket" {
+  name                        = "v2-prod-frontend-bucket"
+  location                    = var.region
+  project                     = var.project
+  force_destroy               = true
+  uniform_bucket_level_access = true
+  website {
+    main_page_suffix = "index.html"
+    not_found_page   = "404.html"
+  }
+}
+
+resource "google_storage_bucket_iam_member" "public_read" {
+  bucket = google_storage_bucket.frontend_bucket.name
+  role   = "roles/storage.objectViewer"
+  member = "allUsers"
 }
 
 resource "google_compute_backend_bucket" "frontend" {
@@ -55,6 +73,7 @@ resource "google_compute_global_forwarding_rule" "https" {
   ip_protocol           = "TCP"
   ip_address            = google_compute_global_address.https_lb_ip.address
   project               = var.project
+  ip_address            = google_compute_global_address.https_lb_ip.address
 }
 
 resource "google_compute_backend_service" "backend" {
@@ -63,6 +82,7 @@ resource "google_compute_backend_service" "backend" {
   protocol    = "HTTP"
   port_name   = "http"
   timeout_sec = 30
+  timeout_sec = 600
 
   health_checks = [var.backend_health_check]
 

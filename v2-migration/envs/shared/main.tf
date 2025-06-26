@@ -79,7 +79,7 @@ module "monitoring" {
   instance_name         = "monitoring-instance"
   machine_type          = "e2-small"
   disk_size             = 50
-  network_tags          = ["monitoring", "prometheus", "grafana", "loki"]
+  network_tags          = ["monitoring", "prometheus", "grafana", "loki", "scouter"]
   monitoring_ports      = ["9090", "3000"]
   allowed_source_ranges = ["10.0.0.0/8"]
 

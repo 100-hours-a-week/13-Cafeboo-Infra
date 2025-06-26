@@ -112,3 +112,24 @@ resource "google_compute_firewall" "allow_ssh" {
   source_ranges = ["0.0.0.0/0"]
   priority      = 65534
 }
+
+resource "google_compute_firewall" "allow_scouter_agent_to_collector" {
+  name    = "allow-scouter-agent-to-collector"
+  project = var.project
+  network = module.vpc.network_self_link
+
+  direction     = "INGRESS"
+  priority      = 1000
+  source_ranges = ["10.20.0.0/16"]
+
+  allow {
+    protocol = "udp"
+    ports    = ["6188"] # Scouter Agent → Collector (메트릭)
+  }
+  allow {
+    protocol = "tcp"
+    ports    = ["6100"] # Scouter Agent → Collector (오브젝트 전송)
+  }
+
+  target_tags = ["scouter"]
+}

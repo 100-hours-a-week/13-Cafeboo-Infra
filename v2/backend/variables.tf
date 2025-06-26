@@ -1,9 +1,9 @@
 variable "project" {
-  default = "elevated-valve-459107-h8"
+  default = "master-isotope-462503-m9"
 }
 variable "region" {
   default = "asia-northeast3"
 }
 variable "bucket_name" {
-  default = "cafeboo-v2-prod-tfstate"
+  default = "cafeboo-v2-5-prod-tfstate"
 }

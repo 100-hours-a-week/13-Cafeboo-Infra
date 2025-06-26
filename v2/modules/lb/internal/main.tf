@@ -35,4 +35,5 @@ resource "google_compute_forwarding_rule" "internal" {
   ports                 = ["8000"]
   subnetwork            = var.subnet_self_link
   network               = var.network_self_link
+  ip_address            = var.ip_address
 }

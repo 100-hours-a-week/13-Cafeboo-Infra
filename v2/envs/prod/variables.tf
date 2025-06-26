@@ -1,7 +1,7 @@
 variable "project" {
   type        = string
   description = "GCP 프로젝트 ID"
-  default     = "elevated-valve-459107-h8"
+  default     = "master-isotope-462503-m9"
 }
 
 variable "region" {
