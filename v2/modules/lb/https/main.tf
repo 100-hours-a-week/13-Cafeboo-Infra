@@ -71,7 +71,6 @@ resource "google_compute_global_forwarding_rule" "https" {
   port_range            = "443"
   load_balancing_scheme = "EXTERNAL"
   ip_protocol           = "TCP"
-  ip_address            = google_compute_global_address.https_lb_ip.address
   project               = var.project
   ip_address            = google_compute_global_address.https_lb_ip.address
 }
@@ -81,7 +80,6 @@ resource "google_compute_backend_service" "backend" {
   project     = var.project
   protocol    = "HTTP"
   port_name   = "http"
-  timeout_sec = 30
   timeout_sec = 600
 
   health_checks = [var.backend_health_check]
