@@ -72,5 +72,5 @@ module "monitoring" {
   allowed_source_ranges = ["10.0.0.0/8"]
 
   vpc_network_self_link = module.vpc.network_self_link
-  subnet_self_link      = module.vpc.private_subnet_self_links["zone-b"]
+  subnet_self_link      = module.vpc.public_subnet_self_links["zone-a"]
 }
