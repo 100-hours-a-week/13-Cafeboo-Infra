@@ -21,3 +21,18 @@ module "vpc" {
   availability_zones   = ["ap-northeast-2a", "ap-northeast-2c"]
 }
 
+module "nat" {
+  source = "../../modules/nat"
+
+  vpc_id = module.vpc.vpc_id
+
+  public_subnets = {
+    "ap-northeast-2a" = module.vpc.public_subnet_ids[0]
+    "ap-northeast-2c" = module.vpc.public_subnet_ids[1]
+  }
+
+  private_subnets = {
+    "ap-northeast-2a" = module.vpc.private_subnet_ids[0]
+    "ap-northeast-2c" = module.vpc.private_subnet_ids[1]
+  }
+}
