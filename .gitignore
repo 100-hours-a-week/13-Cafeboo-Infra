@@ -6,6 +6,7 @@
 # terraform key file
 terraform-key.json
 terraform-key-cafeboo33.json
+v2-test-key.json
 
 # tfstate
 *.tfstate*
