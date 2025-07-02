@@ -19,3 +19,5 @@ v2-test-key.json
 #model files
 embedding_model.tar.gz
 best_model.pt
+
+.patch
