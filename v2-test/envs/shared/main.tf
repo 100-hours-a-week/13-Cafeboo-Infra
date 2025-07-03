@@ -21,11 +21,11 @@ module "vpc" {
   region   = var.region
   vpc_name = "v2-shared-vpc"
   public_subnets = {
-    zone-a = { cidr = "10.30.1.0/24" }
+    zone-a = { cidr = "10.30.2.0/24" }
   }
 
   private_subnets = {
-    zone-b = { cidr = "10.30.2.0/24" }
+    zone-b = { cidr = "10.30.3.0/24" }
   }
 }
 

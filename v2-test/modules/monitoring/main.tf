@@ -79,7 +79,7 @@ resource "google_compute_subnetwork_iam_member" "monitoring_network_user" {
 resource "google_compute_address" "monitoring_ip" {
   name         = "monitoring-fixed-ip"
   address_type = "INTERNAL"
-  address      = "10.30.1.19"
+  address      = "10.30.2.19"
   region       = var.region
   subnetwork   = var.subnet_self_link
   project      = var.project_id
