@@ -124,7 +124,7 @@ resource "google_compute_firewall" "allow_scouter_agent_to_collector" {
 
   allow {
     protocol = "udp"
-    ports    = ["6188"] # Scouter Agent → Collector (메트릭)
+    ports    = ["6100,6188"] # Scouter Agent → Collector (메트릭)
   }
   allow {
     protocol = "tcp"
