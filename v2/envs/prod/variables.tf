@@ -1,7 +1,7 @@
 variable "project" {
   type        = string
   description = "GCP 프로젝트 ID"
-  default     = "master-isotope-462503-m9"
+  default     = "true-alliance-464905-t8"
 }
 
 variable "region" {

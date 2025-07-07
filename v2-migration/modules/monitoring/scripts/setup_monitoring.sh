@@ -36,11 +36,11 @@ global:
 scrape_configs:
   - job_name: 'spring-be'
     gce_sd_configs:
-      - project: "master-isotope-462503-m9"
+      - project: "true-alliance-464905-t8"
         zone: "asia-northeast3-a"
         port: 8080
         filter: '(name eq "backend-mig-.*")'
-      - project: "master-isotope-462503-m9"
+      - project: "true-alliance-464905-t8"
         zone: "asia-northeast3-b"
         port: 8080
         filter: '(name eq "backend-mig-.*")'
@@ -54,11 +54,11 @@ scrape_configs:
 
   - job_name: 'fastapi-ai'
     gce_sd_configs:
-      - project: "master-isotope-462503-m9"
+      - project: "true-alliance-464905-t8"
         zone: "asia-northeast3-a"
         port: 8000
         filter: '(name eq "ai-mig-.*")'
-      - project: "master-isotope-462503-m9"
+      - project: "true-alliance-464905-t8"
         zone: "asia-northeast3-b"
         port: 8000
         filter: '(name eq "ai-mig-.*")'
@@ -72,11 +72,11 @@ scrape_configs:
 
   - job_name: 'node-exporter-be'
     gce_sd_configs:
-      - project: "master-isotope-462503-m9"
+      - project: "true-alliance-464905-t8"
         zone: "asia-northeast3-a"
         port: 9100
         filter: '(name eq "backend-mig-.*")'
-      - project: "master-isotope-462503-m9"
+      - project: "true-alliance-464905-t8"
         zone: "asia-northeast3-b"
         port: 9100
         filter: '(name eq "backend-mig-.*")'
@@ -89,11 +89,11 @@ scrape_configs:
 
   - job_name: 'node-exporter-ai'
     gce_sd_configs:
-      - project: "master-isotope-462503-m9"
+      - project: "true-alliance-464905-t8"
         zone: "asia-northeast3-a"
         port: 9100
         filter: '(name eq "ai-mig-.*")'
-      - project: "master-isotope-462503-m9"
+      - project: "true-alliance-464905-t8"
         zone: "asia-northeast3-b"
         port: 9100
         filter: '(name eq "ai-mig-.*")'

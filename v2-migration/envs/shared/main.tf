@@ -7,7 +7,7 @@ provider "google" {
 # 상태 관리
 terraform {
   backend "gcs" {
-    bucket      = "cafeboo-v2-dev-tfstate"
+    bucket      = "cafeboo-v2-a4-dev-tfstate"
     prefix      = "v2/shared"
     credentials = "../../terraform-key-cafeboo33.json"
   }

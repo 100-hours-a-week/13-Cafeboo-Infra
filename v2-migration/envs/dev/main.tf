@@ -8,7 +8,7 @@ provider "google" {
 # 상태 관리
 terraform {
   backend "gcs" {
-    bucket      = "cafeboo-v2-dev-tfstate"
+    bucket      = "cafeboo-v2-a4-dev-tfstate"
     prefix      = "v2/dev"
     credentials = "../../terraform-key-cafeboo33.json"
   }
@@ -59,7 +59,7 @@ module "dev_vm" {
   external_ip         = data.google_compute_address.dev_ip.address
 
   service_account = {
-    email  = "terraform@master-isotope-462503-m9.iam.gserviceaccount.com"
+    email  = "terraform@true-alliance-464905-t8.iam.gserviceaccount.com"
     scopes = ["cloud-platform"]
   }
 }

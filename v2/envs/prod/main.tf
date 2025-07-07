@@ -8,7 +8,7 @@ provider "google" {
 # Backend
 terraform {
   backend "gcs" {
-    bucket      = "cafeboo-v2-5-prod-tfstate"
+    bucket      = "cafeboo-v2-a4-prod-tfstate"
     prefix      = "v2/prod"
     credentials = "../../terraform-key.json"
   }
@@ -197,7 +197,7 @@ resource "google_network_connectivity_spoke" "connect_vpc" {
   project  = var.project
   location = "global"
 
-  hub = "projects/master-isotope-462503-m9/locations/global/hubs/v2-shared-hub"
+  hub = "projects/true-alliance-464905-t8/locations/global/hubs/v2-shared-hub"
 
   linked_vpc_network {
     uri = module.vpc.network_self_link
