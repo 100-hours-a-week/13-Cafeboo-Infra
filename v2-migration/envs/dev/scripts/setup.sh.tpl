@@ -67,6 +67,7 @@ echo "✅ Docker 설치 및 실행 완료!"
 # Promtail 설치 및 설정
 ############################################
 echo "📦 Promtail 설치 중..."
+sudo apt-get install -y unzip
 
 curl -LO "https://github.com/grafana/loki/releases/download/v2.9.4/promtail-linux-amd64.zip"
 unzip promtail-linux-amd64.zip
@@ -86,7 +87,7 @@ positions:
   filename: /etc/promtail/positions.yaml
 
 clients:
-  - url: "${loki_url}"
+  - url: http://10.30.2.19:3100/loki/api/v1/push
 
 scrape_configs:
   - job_name: docker-containers
@@ -98,8 +99,8 @@ scrape_configs:
       - docker: {}
 
       - labels:
-          job: ${job_label}
-          instance: ${instance}
+          job: backend
+          instance: dev-vm
 
     relabel_configs:
       - source_labels: [__meta_docker_container_name]
@@ -117,6 +118,6 @@ EOF
 
 # Promtail 실행
 echo "🚀 Promtail 시작 중..."
-nohup promtail -config.file=/etc/promtail/config.yaml > /var/log/promtail.log 2>&1 &
+nohup promtail -config.file=/etc/promtail/config.yaml > ~/promtail.log 2>&1 &
 
 echo "✅ 모든 설치 및 설정이 완료되었습니다!"
