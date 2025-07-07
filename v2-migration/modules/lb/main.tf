@@ -69,7 +69,7 @@ resource "google_compute_managed_ssl_certificate" "ssl_cert" {
 }
 
 # 글로벌 IP 주소 예약
-data "google_compute_global_address" "lb_ip" {
+resource "google_compute_global_address" "lb_ip" {
   name    = var.lb_ip_name
   project = var.project
 }
@@ -83,7 +83,7 @@ resource "google_compute_target_https_proxy" "https_proxy" {
 
 resource "google_compute_global_forwarding_rule" "https_rule" {
   name       = "${var.name}-https-forwarding-rule"
-  ip_address = data.google_compute_global_address.lb_ip.address
+  ip_address = google_compute_global_address.lb_ip.address
   port_range = "443"
   target     = google_compute_target_https_proxy.https_proxy.self_link
 }

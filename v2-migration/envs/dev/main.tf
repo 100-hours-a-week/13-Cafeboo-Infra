@@ -35,6 +35,11 @@ module "nat" {
 
 }
 
+resource "google_compute_address" "dev_ip" {
+  name   = "dev-vm-ip"
+  region = var.region
+}
+
 # vm 
 module "dev_vm" {
   source              = "../../modules/compute_instance"
@@ -56,19 +61,12 @@ module "dev_vm" {
   }
 
   tags = ["dev","http-server","iap-access", "mysql-enabled", "allow-vpn-to-ai"]
-  external_ip         = data.google_compute_address.dev_ip.address
+  external_ip = google_compute_address.dev_ip.address
 
   service_account = {
     email  = "terraform@true-alliance-464905-t8.iam.gserviceaccount.com"
     scopes = ["cloud-platform"]
   }
-}
-
-# 임시 dev 외부 IP
-data "google_compute_address" "dev_ip" {
-  name   = "dev-vm-ip" 
-  region = var.region
-  project = var.project
 }
 
 # HTTPS Load Balancer

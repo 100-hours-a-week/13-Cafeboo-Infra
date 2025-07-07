@@ -50,9 +50,10 @@ module "ncc_hub" {
 ## openvpn 설정
 
 # OpenVPN 외부 IP
-data "google_compute_address" "openvpn_ip" {
-  name   = "openvpn-static-ip" 
-  region = var.region
+resource "google_compute_address" "openvpn_ip" {
+  name    = "openvpn-static-ip"
+  region  = var.region
+  project = var.project
 }
 
 module "openvpn" {
@@ -61,8 +62,8 @@ module "openvpn" {
   region     = var.region
   zone       = var.zone
   subnet     = module.vpc.public_subnet_self_link
-  static_ip  = data.google_compute_address.openvpn_ip.address
   instance_name = "openvpn-vm"
+  static_ip      = google_compute_address.openvpn_ip.address
   startup_script = file("${path.module}/scripts/install-openvpn.sh")
   tags       = ["openvpn-server"]
 }
