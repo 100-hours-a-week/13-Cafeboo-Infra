@@ -89,3 +89,18 @@ module "monitoring" {
 }
 
 
+# NCC
+## Spoke 생성
+resource "google_network_connectivity_spoke" "connect_vpc" {
+  name     = "shared-vpc-spoke"
+  project  = var.project
+  location = "global"
+
+  hub = "projects/true-alliance-464905-t8/locations/global/hubs/v2-shared-hub"
+
+  linked_vpc_network {
+    uri = module.vpc.network_self_link
+  }
+
+  description = "shared vpc connect"
+}
