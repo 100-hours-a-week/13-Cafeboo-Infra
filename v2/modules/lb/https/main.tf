@@ -47,7 +47,7 @@ resource "google_compute_url_map" "https" {
     default_service = google_compute_backend_bucket.frontend.self_link
 
     path_rule {
-      paths   = ["/api/*"]
+      paths   = ["/api/*", "/ws/*"]
       service = google_compute_backend_service.backend.self_link
     }
   }
@@ -73,7 +73,6 @@ resource "google_compute_global_forwarding_rule" "https" {
   ip_protocol           = "TCP"
   ip_address            = google_compute_global_address.https_lb_ip.address
   project               = var.project
-  ip_address            = google_compute_global_address.https_lb_ip.address
 }
 
 resource "google_compute_backend_service" "backend" {
@@ -81,7 +80,6 @@ resource "google_compute_backend_service" "backend" {
   project     = var.project
   protocol    = "HTTP"
   port_name   = "http"
-  timeout_sec = 30
   timeout_sec = 600
 
   health_checks = [var.backend_health_check]

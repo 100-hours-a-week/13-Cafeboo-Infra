@@ -30,6 +30,7 @@ resource "google_compute_backend_service" "backend" {
   port_name                       = "http"
   timeout_sec                     = 30
   health_checks                   = [google_compute_health_check.http.self_link]
+  timeout_sec   = 600
   backend {
     group = google_compute_instance_group.group.self_link
   }
